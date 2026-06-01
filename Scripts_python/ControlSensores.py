@@ -15,12 +15,12 @@ evento_emergencia = threading.Event()
 def aplicar_parada_emergencia():
     RDK.setSimulationSpeed(0)
     RDK.setParam("CRITICAL_STOP", "1")
-    print("🚨 [ALERTA GLOBAL INMEDIATA] Paro de Emergencia Activado.")
+    print("[ALERTA GLOBAL INMEDIATA] Paro de Emergencia Activado.")
 
 def aplicar_rearme(client):
     RDK.setParam("CRITICAL_STOP", "0")
     RDK.setSimulationSpeed(5)
-    print("💚 [SISTEMA REARMADO] Reanudando RoboDK...")
+    print("[SISTEMA REARMADO] Reanudando RoboDK...")
     forzar_reenvio_estado(client)
 
 def forzar_reenvio_estado(client):
@@ -43,10 +43,10 @@ def forzar_reenvio_estado(client):
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("✅ Conectado con éxito al Broker EMQX")
+        print("Conectado con éxito al Broker EMQX")
         client.subscribe("fabrica/#")
     else:
-        print(f"⚠ Conexión fallida, rc={rc}")
+        print(f"Conexión fallida")
 
 def on_message(client, userdata, msg):
     payload = msg.payload.decode("utf-8")
@@ -72,13 +72,13 @@ client.reconnect_delay_set(min_delay=1, max_delay=10)
 try:
     client.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
 except Exception as e:
-    print(f"❌ Imposible conectar al broker: {e}")
+    print(f"Imposible conectar al broker: {e}")
     sys.exit(1)
 
 hilo_mqtt = threading.Thread(target=client.loop_forever, daemon=True)
 hilo_mqtt.start()
 
-print("🚀 Supervisor en Tiempo Real de RoboDK corriendo...")
+print("Supervisor en Tiempo Real de RoboDK corriendo...")
 
 time.sleep(1)
 forzar_reenvio_estado(client)
@@ -109,7 +109,7 @@ try:
                         client.publish(topic, str(parada), retain=True)
                         ultimo[0] = parada
             except Exception as e:
-                print(f"⚠ Error leyendo {param}: {e}")
+                print(f"Error leyendo {param}: {e}")
 
         time.sleep(0.15)
 
