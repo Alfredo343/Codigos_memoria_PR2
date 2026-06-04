@@ -65,14 +65,14 @@ void publicarEmergenciaSiCambia() {
 
   if (emergenciaActiva != ultimoEstadoPublicado) {
     if (emergenciaActiva) {
-      Serial.println("🚨 PARO DE EMERGENCIA -> MQTT = 1");
+      Serial.println("PARO DE EMERGENCIA -> MQTT = 1");
       client.publish("fabrica/control/emergencia", "1", true); // retained
       // Apaga LEDs al entrar en emergencia
       digitalWrite(PIN_LED_FRESA, LOW);
       digitalWrite(PIN_LED_NARANJA, LOW);
       digitalWrite(PIN_LED_PALETIZADO, LOW);
     } else {
-      Serial.println("💚 REARME -> MQTT = 0");
+      Serial.println("REARME -> MQTT = 0");
       client.publish("fabrica/control/emergencia", "0", true); // retained
     }
 
@@ -166,7 +166,7 @@ void vTareaMqttRutina(void *pvParameters) {
     // -------------------------------------------------------------
     if (!client.connected()) {
       if (client.connect("ESP32_Factory_Master")) {
-        Serial.println("✅ Conectado al Broker MQTT.");
+        Serial.println("Conectado al Broker MQTT.");
         client.subscribe("fabrica/control/#");
 
         // MUY IMPORTANTE:
@@ -205,7 +205,7 @@ void setup() {
 
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) { delay(200); }
-  Serial.println("✅ WiFi conectado.");
+  Serial.println("WiFi conectado.");
 
   xTaskCreate(vTareaMqttRutina, "M_Rutina", 4096, NULL, 5, &xHandleMqtt);
 
