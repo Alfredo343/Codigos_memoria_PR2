@@ -23,7 +23,7 @@ PARAM_SENSOR_CIERRE = 'sensor_cierre1'  # informativo
 PARAM_CMD_CIERRE2  = 'cmd_cierre2'       # +1 por cada sellado
 PARAM_CIERRE2_FULL = 'cierre2_full'      # backpressure desde cierre2
 
-# 🔧 Limpieza inicial (recomendado mientras pruebas)
+# Limpieza inicial (recomendado mientras pruebas)
 STARTUP_CLEAN = True
 
 mechanism = RDK.Item(MECHANISM_NAME, ITEM_TYPE_ROBOT)
@@ -70,7 +70,7 @@ def avance(e):
 def incrementar_cmd_cierre2():
     cur = get_int_param(PARAM_CMD_CIERRE2, 0)
     set_int_param(PARAM_CMD_CIERRE2, cur + 1)
-    print(f"✅ [CIERRE1] Caja sellada -> {PARAM_CMD_CIERRE2} = {cur+1}")
+    print(f"[CIERRE1] Caja sellada -> {PARAM_CMD_CIERRE2} = {cur+1}")
 
 def crear_caja(spawn_pos):
     """Crea una caja vacía (visible) como clon de la plantilla."""
@@ -102,11 +102,10 @@ def registrar_existentes():
 
 # ------------------ ARRANQUE LIMPIO ------------------
 if STARTUP_CLEAN:
-    # Reset de variables de control (para pruebas)
+    # Reset de variables de control
     set_int_param(PARAM_BRICKS_IN_BOX, 0)
     set_int_param(PARAM_SENSOR_CIERRE, 1)
-    # OJO: NO tocamos cierre2_full aquí (lo pone cierre2)
-    # Vaciamos lista y eliminamos clones antiguos (dejamos la plantilla)
+    # Vaciamos lista y eliminamos clones antiguos
     for obj in padre_mov.Childs():
         if obj.Valid() and obj != box_template:
             try:
@@ -115,22 +114,20 @@ if STARTUP_CLEAN:
                 pass
     cajas = []
 
-# ------------------ PLANTILLA SEGURA ------------------
-# Mover la plantilla fuera de escena y ocultarla para que no te "desaparezca" la caja real
 try:
     box_template.setPose(transl(0, 0, -1000))  # fuera de vista
     box_template.setVisible(0)
 except:
     pass
 
-# Registrar cajas existentes (si no hiciste clean, o si hay algo)
+# Registrar cajas existentes
 registrar_existentes()
 
 # Si no hay ninguna caja real, creamos una inicial
 if len(cajas) == 0:
     crear_caja(pos_cinta)
 
-print("✅ CIERRE1 OK (2 bricks -> avanza + nueva caja; fin -> sellado -> cmd_cierre2)")
+print("CIERRE1 OK (2 bricks -> avanza + nueva caja; fin -> sellado -> cmd_cierre2)")
 
 while True:
     limpiar_invalidas()
