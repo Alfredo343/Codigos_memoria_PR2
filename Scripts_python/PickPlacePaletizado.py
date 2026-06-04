@@ -48,7 +48,7 @@ except:
     idx_place = 0
     RDK.setParam("idx_place", 0)
 
-print("🤖 [ROBOT KUKA] Listo para paletizado continuo en paralelo...")
+print("[ROBOT KUKA] Listo para paletizado continuo en paralelo...")
 robot.setPoseFrame(frame_pick)
 robot.MoveJ(reposo)
 
@@ -59,7 +59,7 @@ while True:
         estado = 0
 
     if estado == 1:
-        print("\n🦾 [ROBOT] ---> INICIANDO: PICK 1 <---")
+        print("\n[ROBOT] ---> INICIANDO: PICK 1 <---")
         caja_actual = get_caja_en_cinta(frame_cinta)
 
         if caja_actual:
@@ -72,9 +72,9 @@ while True:
             robot.MoveL(postPick)
 
             # =======================================================
-            # 🔥 ACTIVACIÓN EN PARALELO: AVANCE DE CINTA EN BACKGROUND
+            # ACTIVACIÓN EN PARALELO: AVANCE DE CINTA EN BACKGROUND
             # =======================================================
-            print("🔄 [ROBOT] Caja 1 levantada. Solicitando avance de cinta (Estado 2)...")
+            print("[ROBOT] Caja 1 levantada. Solicitando avance de cinta (Estado 2)...")
             RDK.setParam('sensor_cerrada', 2)
 
             # --- MANIOBRA PLACE 1 (Mientras la cinta se mueve solo en RoboDK) ---
@@ -98,9 +98,9 @@ while True:
             robot.setPoseFrame(frame_pick)
 
             # =======================================================
-            # 🔒 ANCLA DE SINCRO: Esperar que la caja 2 termine de llegar
+            # ANCLA DE SINCRO: Esperar que la caja 2 termine de llegar
             # =======================================================
-            print("⏳ [ROBOT] Esperando confirmación de posición de caja 2...")
+            print("[ROBOT] Esperando confirmación de posición de caja 2...")
             while True:
                 try:
                     confirmacion = int(float(RDK.getParam('sensor_cerrada')))
@@ -111,7 +111,7 @@ while True:
                 time.sleep(0.02)
             # =======================================================
 
-            print("🦾 [ROBOT] ---> CONTINUANDO: PICK 2 <---")
+            print("[ROBOT] ---> CONTINUANDO: PICK 2 <---")
             caja_actual2 = get_caja_en_cinta(frame_cinta)
 
             if caja_actual2:
@@ -142,14 +142,14 @@ while True:
                 # Regreso definitivo a reposo seguro
                 robot.setPoseFrame(frame_pick)
                 robot.MoveJ(reposo)
-                print("✅ [ROBOT] Ciclo doble de paletizado finalizado.")
+                print("[ROBOT] Ciclo doble de paletizado finalizado.")
             else:
-                print("⚠️ [ROBOT] Error: No se encontró la segunda caja.")
+                print("[ROBOT] Error: No se encontró la segunda caja.")
 
             # =======================================================
-            # 🔒 ANCLA DE REINICIO SEGURO Y LIMPIEZA
+            # ANCLA DE REINICIO SEGURO Y LIMPIEZA
             # =======================================================
-            print("🔄 [ROBOT] Solicitando limpieza de zona de picking (Estado 4)...")
+            print("[ROBOT] Solicitando limpieza de zona de picking (Estado 4)...")
             RDK.setParam('sensor_cerrada', 4)
 
             while True:
@@ -158,13 +158,13 @@ while True:
                 except:
                     confirmacion_reinicio = 4
                 if confirmacion_reinicio == 0:
-                    print("👍 [ROBOT] Cinta lista. Iniciando nueva ronda.\n")
+                    print("[ROBOT] Cinta lista. Iniciando nueva ronda.\n")
                     break
                 time.sleep(0.02)
             # =======================================================
 
         else:
-            print("⚠️ [ROBOT] No se encontró la primera caja. Forzando reinicio.")
+            print("[ROBOT] No se encontró la primera caja. Forzando reinicio.")
             RDK.setParam('sensor_cerrada', 4)
 
     time.sleep(0.05)
