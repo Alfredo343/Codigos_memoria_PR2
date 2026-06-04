@@ -57,7 +57,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
                 time.sleep(0.1)
                 continue
 
-            print("🔄 [CINTA 2] Avance intermedio concedido. Descontando 6 zumos...")
+            print("[CINTA 2] Avance intermedio concedido. Descontando 6 zumos...")
             mechanism.setSpeed(100)
             RDK.setParam('contador_fresa', zumes_listos - 6)
             
@@ -94,7 +94,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
                 break
 
         if sensor_activado:
-            print("🚨 [CINTA 2] Caja llegó a zona de Pick. Cedida al Robot (Estado 1).")
+            print("[CINTA 2] Caja llegó a zona de Pick. Cedida al Robot (Estado 1).")
             mechanism.setSpeed(0)
             RDK.setParam('sensor_bfresa', 1)
             time.sleep(0.3)
@@ -108,7 +108,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
 
         if botellas_acumuladas >= 6:
             RDK.setParam('contador_fresa', botellas_acumuladas - 6)
-            print(f"📦 [NUEVO BRICK] 6 botellas empaquetadas registradas. Entrando caja a la línea.")
+            print(f"[NUEVO BRICK] 6 botellas empaquetadas registradas. Entrando caja a la línea.")
             
             mechanism.setSpeed(100)
             pos_actual_cinta = float(mechanism.Joints().list()[0])
