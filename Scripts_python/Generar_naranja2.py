@@ -56,7 +56,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
                 time.sleep(0.1)
                 continue
 
-            print("🔄 [CINTA 2] Avance intermedio concedido. Descontando 6 botellas de naranja...")
+            print("[CINTA 2] Avance intermedio concedido. Descontando 6 botellas de naranja...")
             mechanism.setSpeed(100)
             RDK.setParam('contador_naranja', naranjas_listas - 6)
             
@@ -73,7 +73,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
 
         # CASO 4: Fin de ciclo (Reset y purga de zona)
         if estado == 4:
-            print("🧹 [CINTA 2] Purgando zona de picking (Estado 4)...")
+            print("[CINTA 2] Purgando zona de picking (Estado 4)...")
             mechanism.setSpeed(100)
             pos_actual = float(mechanism.Joints().list()[0])
             nueva_pos = pos_actual + INCREMENTO_MM
@@ -93,7 +93,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
                 break
 
         if sensor_activado:
-            print("🚨 [CINTA 2] Caja llegó a zona de Pick. Cedida al Robot (Estado 1).")
+            print("[CINTA 2] Caja llegó a zona de Pick. Cedida al Robot (Estado 1).")
             mechanism.setSpeed(0)
             RDK.setParam('sensor_bnaranja', 1)
             time.sleep(0.3)
@@ -107,7 +107,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
 
         if botellas_acumuladas >= 6:
             RDK.setParam('contador_naranja', botellas_acumuladas - 6)
-            print(f"📦 [NUEVA CAJA] 6 botellas registradas. Entrando caja a la línea.")
+            print(f"[NUEVA CAJA] 6 botellas registradas. Entrando caja a la línea.")
             
             mechanism.setSpeed(100)
             pos_actual_cinta = float(mechanism.Joints().list()[0])
