@@ -28,8 +28,8 @@ PARAM_SENSOR_BFRESA   = 'sensor_bfresa'     # 0 normal, 1 pick, 2 avance, 3 plac
 PARAM_CONTADOR_FRESA  = 'contador_fresa'    # cuenta botellas listas para empaquetar en fresa2
 # -------------------------------------------------------------------
 
-# 🔧 RESET (corregido) para evitar “ocultación” por coordenadas enormes
-RESET_EJE = 20000  # prueba 20000-50000. Si lo pones a 0 -> sin reset
+# RESET
+RESET_EJE = 20000 
 
 RDK.setParam('sensor_zfresa', '0')
 
@@ -104,7 +104,7 @@ def incrementar_contador_global():
     cur = get_int_param(PARAM_CONTADOR_FRESA, 0)
     set_int_param(PARAM_CONTADOR_FRESA, cur + 1)
     if DEBUG:
-        print(f"🍓 [FRESA1] +1 {PARAM_CONTADOR_FRESA} => {cur+1}")
+        print(f"[FRESA1] +1 {PARAM_CONTADOR_FRESA} => {cur+1}")
 
 def resetear_eje_si_toca():
     """
@@ -116,7 +116,7 @@ def resetear_eje_si_toca():
     global pos_cinta, cola
     if RESET_EJE and pos_cinta > RESET_EJE:
         if DEBUG:
-            print("🔄 [FRESA1] RESET EJE (sin salto visual)")
+            print("[FRESA1] RESET EJE (sin salto visual)")
 
         delta = pos_cinta
 
@@ -154,7 +154,7 @@ try:
                 bloqueada = True
                 t_block_start = time.time()
                 if DEBUG:
-                    print(f"🛑 [FRESA1] BLOQUEO por {PARAM_SENSOR_BFRESA}={estado_b}")
+                    print(f"[FRESA1] BLOQUEO por {PARAM_SENSOR_BFRESA}={estado_b}")
 
             try:
                 mechanism.setSpeed(0)
@@ -170,7 +170,7 @@ try:
                     t_pause_start += delta
                 bloqueada = False
                 if DEBUG:
-                    print(f"✅ [FRESA1] DESBLOQUEO ({PARAM_SENSOR_BFRESA}={estado_b})")
+                    print(f"[FRESA1] DESBLOQUEO ({PARAM_SENSOR_BFRESA}={estado_b})")
 
             try:
                 mechanism.setSpeed(100)
