@@ -33,8 +33,6 @@ if padre.Valid():
                 print("Plantilla original guardada y posicionada.")
                 continue  # Salta al siguiente objeto sin borrar este
             
-            # Si ya habías conservado uno, los demás 'brick_naranja' son clones viejos.
-            # No entran al 'if' anterior y caen aquí abajo para ser eliminados.
             
         # Se elimina cualquier clon viejo o residuo de la simulación anterior
         item.Delete()
