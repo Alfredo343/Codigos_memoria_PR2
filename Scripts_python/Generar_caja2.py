@@ -28,7 +28,7 @@ def generar_caja(pos):
         nueva.setVisible(1)
 
 if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
-    print("🚧 CINTA CIERRE CONTROLADA MULTI-ESTADO ACTIVA")
+    print("CINTA CIERRE CONTROLADA MULTI-ESTADO ACTIVA")
 
     while True:
         try:
@@ -44,7 +44,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
 
         # CASO 2: El robot pide avanzar la cinta para la segunda caja en paralelo
         if estado == 2:
-            print("🔄 [CINTA] Petición de avance intermedio detectada (Estado 2).")
+            print("[CINTA] Petición de avance intermedio detectada (Estado 2).")
             mechanism.setSpeed(100)
             pos_actual = float(mechanism.Joints().list()[0])
             nueva_pos = pos_actual + INCREMENTO_MM
@@ -53,14 +53,14 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
             generar_caja(nueva_pos)
             mechanism.setSpeed(0)
             
-            print("🚨 [CINTA] Caja en posición. Cambiando a Estado 3 para avisar al robot...")
+            print("[CINTA] Caja en posición. Cambiando a Estado 3 para avisar al robot...")
             RDK.setParam('sensor_cerrada', 3)
             time.sleep(0.05)
             continue
 
         # CASO 4: Fin de ciclo doble. Despejar sensor antes de volver a producción.
         if estado == 4:
-            print("🧹 [CINTA] Limpiando zona de sensor tras ciclo doble (Estado 4)...")
+            print("[CINTA] Limpiando zona de sensor tras ciclo doble (Estado 4)...")
             mechanism.setSpeed(100)
             pos_actual = float(mechanism.Joints().list()[0])
             nueva_pos = pos_actual + INCREMENTO_MM
@@ -68,7 +68,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
             
             generar_caja(nueva_pos)
             
-            print("✅ [CINTA] Zona despejada. Devolviendo control al Estado 0.")
+            print("[CINTA] Zona despejada. Devolviendo control al Estado 0.")
             RDK.setParam('sensor_cerrada', 0)
             time.sleep(0.05)
             continue
@@ -82,7 +82,7 @@ if mechanism.Valid() and botella_fuente.Valid() and padre_mov.Valid():
                 break
 
         if sensor_activado:
-            print("🚨 [CINTA] Primera caja detectada en el sensor. Parando cinta (Estado 1).")
+            print("[CINTA] Primera caja detectada en el sensor. Parando cinta (Estado 1).")
             mechanism.setSpeed(0)
             RDK.setParam('sensor_cerrada', 1)
             time.sleep(0.05)
