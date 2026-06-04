@@ -51,7 +51,7 @@ reposo      = RDK.Item("reposo",      ITEM_TYPE_TARGET)
 # =================================================================
 # --- PARÁMETROS PARA SINCRONIZAR CON CIERRE1 ---
 # =================================================================
-PARAM_BRICKS_IN_BOX   = "cierre1_bricks"   # 0..2 (lo incrementa este script al colocar)
+PARAM_BRICKS_IN_BOX   = "cierre1_bricks"   # 0..2
 PARAM_SENSOR_CIERRE1  = "sensor_cierre1"   # 1 = listo/quieto, 0 = moviendo/no disponible
 
 def get_int_param(name, default=0):
@@ -131,11 +131,11 @@ def construir_cola_intercalada(n_fresa, n_naranja):
 # =================================================================
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("✅ [MQTT] Conectado al broker.")
+        print("[MQTT] Conectado al broker.")
         client.subscribe(TOPIC_PEDIDO)
-        print(f"📡 Escuchando pedidos en '{TOPIC_PEDIDO}'...")
+        print(f"Escuchando pedidos en '{TOPIC_PEDIDO}'...")
     else:
-        print(f"⚠ Conexión fallida, rc={rc}")
+        print(f"Conexión fallida, rc={rc}")
 
 def on_message(client, userdata, msg):
     try:
@@ -144,7 +144,7 @@ def on_message(client, userdata, msg):
         n_naranja = int(payload.get("naranja", 0))
 
         if n_fresa == 0 and n_naranja == 0:
-            print("⚠ [MQTT] Pedido vacío, ignorado.")
+            print("[MQTT] Pedido vacío, ignorado.")
             return
 
         nuevos = construir_cola_intercalada(n_fresa, n_naranja)
@@ -152,12 +152,12 @@ def on_message(client, userdata, msg):
         with cola_lock:
             cola_pedidos.extend(nuevos)
 
-        print(f"📦 [MQTT] Pedido recibido → fresa: {n_fresa}, naranja: {n_naranja}")
-        print(f"📋 Cola actual: {cola_pedidos}")
+        print(f"[MQTT] Pedido recibido → fresa: {n_fresa}, naranja: {n_naranja}")
+        print(f"Cola actual: {cola_pedidos}")
         evento_pedido.set()
 
     except Exception as e:
-        print(f"❌ [MQTT] Error procesando pedido: {e}")
+        print(f"[MQTT] Error procesando pedido: {e}")
 
 mqtt_client = mqtt.Client()
 mqtt_client.on_connect = on_connect
@@ -167,7 +167,7 @@ mqtt_client.reconnect_delay_set(min_delay=1, max_delay=10)
 try:
     mqtt_client.connect(MQTT_BROKER, MQTT_PORT, keepalive=60)
 except Exception as e:
-    print(f"❌ Imposible conectar al broker: {e}")
+    print(f"Imposible conectar al broker: {e}")
     raise
 
 hilo_mqtt = threading.Thread(target=mqtt_client.loop_forever, daemon=True)
@@ -190,7 +190,7 @@ def get_brick_en_pick(frame_cinta, tipo):
 
 def esperar_sensor_listo(param):
     """Espera a que la cinta tenga una caja lista (estado 1)."""
-    print(f"⏳ Esperando caja en sensor ({param})...")
+    print(f"Esperando caja en sensor ({param})...")
     esperar_estado(param, 1)
 
 # =================================================================
@@ -201,13 +201,13 @@ def ciclo_fresa():
     sensor = 'sensor_bfresa'
     esperar_sensor_listo(sensor)
 
-    # ✅ Importante: aseguramos que CIERRE1 está quieto y listo antes de colocar
+   #aseguramos que CIERRE1 está quieto y listo antes de colocar
     cierre1_esperar_caja_lista()
 
-    print("\n🦾 [FRESA] --- PICK 1 ---")
+    print("\n[FRESA] --- PICK 1 ---")
     brick1 = get_brick_en_pick(frame_cinta_fresa, "fresa")
     if not brick1:
-        print("⚠ No hay primera caja de fresa. Abortando ciclo.")
+        print("No hay primera caja de fresa. Abortando ciclo.")
         RDK.setParam(sensor, 4)
         esperar_estado(sensor, 0)
         return
@@ -229,21 +229,21 @@ def ciclo_fresa():
     robot.MoveL(postPlace1)
     robot.MoveL(punto_paso)
 
-    # ✅ Avisamos a CIERRE1: 1 brick colocado
+    # Avisamos a CIERRE1: 1 brick colocado
     nuevo = cierre1_sumar_brick()
-    print(f"📌 [SYNC] cierre1_bricks = {nuevo}")
+    print(f"[SYNC] cierre1_bricks = {nuevo}")
 
     robot.setPoseFrame(frame_pick_fresa)
     robot.MoveJ(reposo)
 
-    print("🔄 [FRESA] Pick 1 hecho. Solicitando avance de cinta...")
+    print("[FRESA] Pick 1 hecho. Solicitando avance de cinta...")
     RDK.setParam(sensor, 2)
     esperar_estado(sensor, 3)
 
-    print("\n🦾 [FRESA] --- PICK 2 ---")
+    print("\n[FRESA] --- PICK 2 ---")
     brick2 = get_brick_en_pick(frame_cinta_fresa, "fresa")
     if not brick2:
-        print("⚠ No hay segunda caja de fresa. Abortando ciclo.")
+        print("No hay segunda caja de fresa. Abortando ciclo.")
         RDK.setParam(sensor, 4)
         esperar_estado(sensor, 0)
         return
@@ -265,33 +265,33 @@ def ciclo_fresa():
     robot.MoveL(postPlace2)
     robot.MoveL(punto_paso)
 
-    # ✅ Avisamos a CIERRE1: 2º brick colocado (caja completa)
+    # Avisamos a CIERRE1: 2º brick colocado (caja completa)
     nuevo = cierre1_sumar_brick()
     print(f"📌 [SYNC] cierre1_bricks = {nuevo} (caja completa)")
 
-    # ✅ Esperamos a que CIERRE1 avance + cree caja nueva (y resetee bricks a 0)
+    # Esperamos a que CIERRE1 avance + cree caja nueva (y resetee bricks a 0)
     cierre1_esperar_avance_si_llena(nuevo)
 
     robot.setPoseFrame(frame_pick_fresa)
     robot.MoveJ(reposo)
 
-    print("🔄 [FRESA] Ciclo completo. Limpiando zona...")
+    print("[FRESA] Ciclo completo. Limpiando zona...")
     RDK.setParam(sensor, 4)
     esperar_estado(sensor, 0)
-    print("✅ [FRESA] Caja completada.\n")
+    print("[FRESA] Caja completada.\n")
 
 def ciclo_naranja():
     """Ejecuta un ciclo completo de pick and place de naranja (1 caja = 2 bricks)."""
     sensor = 'sensor_bnaranja'
     esperar_sensor_listo(sensor)
 
-    # ✅ Asegurar CIERRE1 listo antes de colocar
+    # Asegurar CIERRE1 listo antes de colocar
     cierre1_esperar_caja_lista()
 
-    print("\n🦾 [NARANJA] --- PICK 1 ---")
+    print("\n[NARANJA] --- PICK 1 ---")
     brick1 = get_brick_en_pick(frame_cinta_naranja, "naranja")
     if not brick1:
-        print("⚠ No hay primera caja de naranja. Abortando ciclo.")
+        print("No hay primera caja de naranja. Abortando ciclo.")
         RDK.setParam(sensor, 4)
         esperar_estado(sensor, 0)
         return
@@ -313,18 +313,18 @@ def ciclo_naranja():
     robot.MoveL(postPlace1)
     robot.MoveL(punto_paso2)
 
-    # ✅ Aviso a CIERRE1
+    # Aviso a CIERRE1
     nuevo = cierre1_sumar_brick()
-    print(f"📌 [SYNC] cierre1_bricks = {nuevo}")
+    print(f"[SYNC] cierre1_bricks = {nuevo}")
 
-    print("🔄 [NARANJA] Pick 1 hecho. Solicitando avance de cinta...")
+    print("[NARANJA] Pick 1 hecho. Solicitando avance de cinta...")
     RDK.setParam(sensor, 2)
     esperar_estado(sensor, 3)
 
-    print("\n🦾 [NARANJA] --- PICK 2 ---")
+    print("\n[NARANJA] --- PICK 2 ---")
     brick2 = get_brick_en_pick(frame_cinta_naranja, "naranja")
     if not brick2:
-        print("⚠ No hay segunda caja de naranja. Abortando ciclo.")
+        print("No hay segunda caja de naranja. Abortando ciclo.")
         RDK.setParam(sensor, 4)
         esperar_estado(sensor, 0)
         return
@@ -346,17 +346,17 @@ def ciclo_naranja():
     robot.MoveL(postPlace2)
     robot.MoveL(punto_paso2)
 
-    # ✅ Aviso a CIERRE1: completa
+    # Aviso a CIERRE1: completa
     nuevo = cierre1_sumar_brick()
-    print(f"📌 [SYNC] cierre1_bricks = {nuevo} (caja completa)")
+    print(f"[SYNC] cierre1_bricks = {nuevo} (caja completa)")
 
-    # ✅ Espera avance + reset
+    # Espera avance + reset
     cierre1_esperar_avance_si_llena(nuevo)
 
-    print("🔄 [NARANJA] Ciclo completo. Limpiando zona...")
+    print("[NARANJA] Ciclo completo. Limpiando zona...")
     RDK.setParam(sensor, 4)
     esperar_estado(sensor, 0)
-    print("✅ [NARANJA] Caja completada.\n")
+    print("[NARANJA] Caja completada.\n")
 
 # =================================================================
 # --- BUCLE PRINCIPAL ---
@@ -366,7 +366,7 @@ CICLOS = {
     "naranja": ciclo_naranja,
 }
 
-print("🤖 [ROBOT] Sistema listo. Esperando pedidos por MQTT...")
+print("[ROBOT] Sistema listo. Esperando pedidos por MQTT...")
 robot.setPoseFrame(frame_pick_fresa)
 robot.MoveJ(reposo)
 
@@ -380,10 +380,10 @@ while True:
                 break
             tipo = cola_pedidos.pop(0)
 
-        print(f"\n📦 Ejecutando ciclo: {tipo.upper()}")
+        print(f"\nEjecutando ciclo: {tipo.upper()}")
         try:
             CICLOS[tipo]()
         except Exception as e:
-            print(f"❌ Error en ciclo {tipo}: {e}")
+            print(f"Error en ciclo {tipo}: {e}")
 
-    print("✅ Cola vacía. Robot en espera de nuevo pedido.")
+    print("Cola vacía. Robot en espera de nuevo pedido.")
