@@ -30,7 +30,7 @@ for item in RDK.ItemList():
 # 3. DEJAR SOLO 1 (la plantilla) y borrar el resto
 # --------------------------------------------------
 if len(botellas) > 0:
-    # dejamos la primera como plantilla
+    # dejamos la primera
     plantilla = botellas[0]
 
     # colocarla en su sitio original
