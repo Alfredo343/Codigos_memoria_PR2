@@ -99,13 +99,13 @@ def incrementar_contador_global():
     cur = get_int_param(PARAM_CONTADOR_NARANJA, 0)
     set_int_param(PARAM_CONTADOR_NARANJA, cur + 1)
     if DEBUG:
-        print(f"🍊 [NARANJA1] +1 {PARAM_CONTADOR_NARANJA} => {cur+1}")
+        print(f"[NARANJA1] +1 {PARAM_CONTADOR_NARANJA} => {cur+1}")
 
 def resetear_eje_si_toca():
     global pos_cinta, cola
     if RESET_EJE and pos_cinta > RESET_EJE:
         if DEBUG:
-            print("🔄 [NARANJA1] RESET EJE (sin salto visual)")
+            print("[NARANJA1] RESET EJE (sin salto visual)")
 
         delta = pos_cinta
         try:
@@ -138,7 +138,7 @@ try:
                 bloqueada = True
                 t_block_start = time.time()
                 if DEBUG:
-                    print(f"🛑 [NARANJA1] BLOQUEO por {PARAM_SENSOR_BNARANJA}={estado_b}")
+                    print(f"[NARANJA1] BLOQUEO por {PARAM_SENSOR_BNARANJA}={estado_b}")
             try:
                 mechanism.setSpeed(0)
             except:
@@ -152,7 +152,7 @@ try:
                     t_pause_start += delta
                 bloqueada = False
                 if DEBUG:
-                    print(f"✅ [NARANJA1] DESBLOQUEO ({PARAM_SENSOR_BNARANJA}={estado_b})")
+                    print(f"[NARANJA1] DESBLOQUEO ({PARAM_SENSOR_BNARANJA}={estado_b})")
             try:
                 mechanism.setSpeed(100)
             except:
