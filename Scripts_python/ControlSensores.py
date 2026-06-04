@@ -37,9 +37,9 @@ def forzar_reenvio_estado(client):
                 estado = int(float(val))
                 parada = 1 if estado in (1, 3) else 0
                 client.publish(topic, str(parada), retain=True)
-                print(f"↩ Resync {param}: {parada}")
+                print(f"Resync {param}: {parada}")
         except Exception as e:
-            print(f"⚠ Error resync {param}: {e}")
+            print(f"Error resync {param}: {e}")
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
